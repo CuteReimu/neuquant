@@ -21,14 +21,14 @@ import (
 	"github.com/CuteReimu/neuquant"
 	"image"
 	"image/gif"
-	"image/jpeg"
+	"image/png"
 	"os"
 )
 
 func main() {
 	f, _ := os.Open("1.png")
 	defer f.Close()
-	img, _ := jpeg.Decode(f)
+	img, _ := png.Decode(f)
 
 	nq, palette := neuquant.AnalyzePalette(img)
 	img2 := image.NewPaletted(img.Bounds(), palette)

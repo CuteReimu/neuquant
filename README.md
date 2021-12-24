@@ -30,9 +30,7 @@ func main() {
 	defer f.Close()
 	img, _ := png.Decode(f)
 
-	nq, palette := neuquant.AnalyzePalette(img)
-	img2 := image.NewPaletted(img.Bounds(), palette)
-	neuquant.ParallelWritePalette(nq, img, img2)
+	img2 := neuquant.Paletted(img)
 	
 	f2, _ := os.Create("1.gif")
 	defer f2.Close()

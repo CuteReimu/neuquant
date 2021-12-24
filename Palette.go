@@ -6,6 +6,13 @@ import (
 	"sync"
 )
 
+func Paletted(img image.Image) *image.Paletted {
+	nq, palette := AnalyzePalette(img)
+	img2 := image.NewPaletted(img.Bounds(), palette)
+	ParallelWritePalette(nq, img, img2)
+	return img2
+}
+
 const sample = 10 // default sample interval for quantizer
 
 func AnalyzePalette(img image.Image) (*NeuQuant, color.Palette) {

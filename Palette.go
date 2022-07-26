@@ -17,8 +17,9 @@ const sample = 10 // default sample interval for quantizer
 
 func AnalyzePalette(img image.Image) (*NeuQuant, color.Palette) {
 	var pixels []byte
-	for x := img.Bounds().Min.X; x < img.Bounds().Max.X; x++ {
-		for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++ {
+	bounds := img.Bounds()
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 			r, g, b, _ := img.At(x, y).RGBA()
 			pixels = append(pixels, byte(b))
 			pixels = append(pixels, byte(g))

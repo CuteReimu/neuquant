@@ -1,6 +1,6 @@
 # NeuQuant 图像量化算法
 ![](https://img.shields.io/github/languages/top/CuteReimu/neuquant "语言")
-[![](https://img.shields.io/github/workflow/status/CuteReimu/neuquant/Go)](https://github.com/CuteReimu/neuquant/actions/workflows/golangci-lint.yml "代码分析")
+[![](https://img.shields.io/github/actions/workflow/status/CuteReimu/neuquant/golangci-lint.yml?branch=master)](https://github.com/CuteReimu/neuquant/actions/workflows/golangci-lint.yml "代码分析")
 
 Neural network based color quantizer. Can be used to transform image.Image to image.Paletted.
 

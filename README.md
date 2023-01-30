@@ -19,7 +19,6 @@ package main
 
 import (
 	"github.com/CuteReimu/neuquant"
-	"image"
 	"image/gif"
 	"image/png"
 	"os"
@@ -30,11 +29,9 @@ func main() {
 	defer f.Close()
 	img, _ := png.Decode(f)
 
-	img2 := neuquant.Paletted(img)
-	
 	f2, _ := os.Create("1.gif")
 	defer f2.Close()
-	_ = gif.Encode(f2, img2, nil)
+	_ = gif.Encode(f2, img, neuquant.Opt())
 }
 
 ```

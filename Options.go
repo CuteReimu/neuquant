@@ -8,9 +8,10 @@ import (
 )
 
 type quantizer struct {
+	nq *NeuQuant
 }
 
-func (quantizer) Quantize(_ color.Palette, img image.Image) color.Palette {
+func (q *quantizer) Quantize(_ color.Palette, img image.Image) color.Palette {
 	var pixels []byte
 	bounds := img.Bounds()
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
@@ -22,9 +23,9 @@ func (quantizer) Quantize(_ color.Palette, img image.Image) color.Palette {
 		}
 	}
 	length := len(pixels)
-	nq := NewNeuQuant(pixels, length, sample)
+	q.nq = NewNeuQuant(pixels, length, sample)
 	// initialize quantizer
-	colorTab := nq.ColorMap() // create reduced palette
+	colorTab := q.nq.ColorMap() // create reduced palette
 	// convert map from BGR to RGB
 	length = len(colorTab)
 	palette := make(color.Palette, length/3)
@@ -35,37 +36,27 @@ func (quantizer) Quantize(_ color.Palette, img image.Image) color.Palette {
 }
 
 type drawer struct {
+	q *quantizer
 }
 
-func (drawer) Draw(dstOri draw.Image, rect image.Rectangle, src image.Image, sp image.Point) {
+func (d drawer) Draw(dstOri draw.Image, rect image.Rectangle, src image.Image, sp image.Point) {
 	dst, ok := dstOri.(*image.Paletted)
 	if !ok {
 		panic("can only draw on paletted image")
 	}
-	var pixels []byte
-	bounds := src.Bounds()
-	for x := bounds.Min.X; x < bounds.Max.X; x++ {
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			r, g, b, _ := src.At(x, y).RGBA()
-			pixels = append(pixels, byte(b))
-			pixels = append(pixels, byte(g))
-			pixels = append(pixels, byte(r))
-		}
-	}
-	length := len(pixels)
-	nq := NewNeuQuant(pixels, length, sample)
 	for x := rect.Min.X; x < rect.Max.X; x++ {
 		for y := rect.Min.Y; y < rect.Max.Y; y++ {
 			r, g, b, _ := src.At(x-rect.Min.X+sp.X, y-rect.Min.Y+sp.Y).RGBA()
-			dst.SetColorIndex(x, y, uint8(nq.Map(int(b>>8), int(g>>8)&0xff, int(r>>8)&0xff)))
+			dst.SetColorIndex(x, y, uint8(d.q.nq.Map(int(b>>8), int(g>>8)&0xff, int(r>>8)&0xff)))
 		}
 	}
 }
 
 func Opt() *gif.Options {
+	q := &quantizer{}
 	return &gif.Options{
 		NumColors: 256,
-		Quantizer: quantizer{},
-		Drawer:    drawer{},
+		Quantizer: q,
+		Drawer:    drawer{q: q},
 	}
 }
